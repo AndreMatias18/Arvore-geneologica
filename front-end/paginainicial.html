@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <link rel="stylesheet" href="style1.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="#" class="logout-button" onclick="logout()">Logout</a>
+
+    <div class="container">
+        <header>
+            <h1>Adicione todas as informações Parentais</h1>
+        </header>
+        <br><br><br><br>    
+
+        <nav>
+            <ul>
+                <li><a href="adicionarpessoas.html">Adicionar Pessoas</a></li>
+                <li><a href="moradas.html">Adicionar Moradas</a></li>
+                <li><a href="relacionamento.html">Adicionar Relacionamentos</a></li>
+                <li><a href="adicionarevento.html">Adicionar Eventos</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="main-container">
+        
+        
+        <div class="container">
+            <header>
+                <h1>Consulte todas as informações Parentais</h1>
+            </header>
+            <br><br><br><br>
+            <nav>
+                <ul>
+                    <li><a href="consultarpessoas.html">Consultar Pessoas</a></li>
+                    <li><a href="consultarmoradas.html">Consultar Moradas</a></li>
+                    <li><a href="consultarrelacionamento.html">Consultar Relacionamentos</a></li>
+                    <li><a href="consultarevento.html">Consultar Eventos</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        
+
+        <div class="container">
+            <header>
+                <h1>Apague todas as informações Parentais</h1>
+            </header>
+            <br><br><br><br>
+            <nav>
+                <ul>
+                    <li><a href="apagarpessoa.html">Apagar Pessoas</a></li>
+                    <li><a href="apagarmorada.html">Apagar Moradas</a></li>
+                    <li><a href="apagarrelacionamento.html">Apagar Relacionamentos</a></li>
+                    <li><a href="apagarevento.html">Apagar Eventos</a></li>
+                </ul>
+            </nav>
+        </div>  
+    </div>
+
+    <script>
+        function logout() {
+            
+            localStorage.removeItem('token'); 
+    
+          
+            window.location.href = 'index.html';
+        }
+    </script>
+    
+</body>
+</html>

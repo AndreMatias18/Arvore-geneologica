@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relacionamento</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    <form id="adicionarrelacionamentoForm">
+        <h1>Adicionar Relacionamento</h1>
+
+        <!-- Campo para o NIF da primeira pessoa -->
+        <label for="nif_pessoa1">NIF Pessoa 1:</label>
+        <input type="text" id="nif_pessoa1" name="nif_pessoa1" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." oninput="validarNIF1()"><br>
+        <label id="nomePessoaLabel1" style="display: none; color: green;"></label><br>
+
+        <!-- Campo para o NIF da segunda pessoa -->
+        <label for="nif_pessoa2">NIF Pessoa 2:</label>
+        <input type="text" id="nif_pessoa2" name="nif_pessoa2" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." oninput="validarNIF2()"><br>
+        <label id="nomePessoaLabel2" style="display: none; color: green;"></label><br>
+
+        <!-- Campo para o tipo de relacionamento -->
+        <label for="tipoderelacionamento">Tipo de Relacionamento:</label>
+        <input type="text" id="tipoderelacionamento" name="tipoderelacionamento" required><br>
+
+        <!-- Campo para a data de início do relacionamento -->
+        <label for="datainicio">Data de Início:</label>
+        <input type="date" id="datainicio" name="datainicio" min="1910-01-01"><br>
+
+        <!-- Campo para a data de fim do relacionamento -->
+        <label for="datafim">Data de Fim:</label>
+        <input type="date" id="datafim" name="datafim" min="1910-01-01" ><br>
+
+        <!-- Botão para submeter o formulário -->
+        <button type="submit">Adicionar Relacionamento</button>
+    </form>
+
+    <script>
+        function validarNIF1() {
+            const nifPessoa = document.getElementById("nif_pessoa1").value;
+            const nomePessoaLabel1 = document.getElementById("nomePessoaLabel1");
+
+            // Verifica se o NIF tem exatamente 9 dígitos e é numérico
+            const nifRegex = /^\d{9}$/;
+
+            if (!nifRegex.test(nifPessoa)) {
+                nomePessoaLabel1.textContent = "O NIF deve conter exatamente 9 números.";
+                nomePessoaLabel1.style.display = 'block';
+                nomePessoaLabel1.style.color = 'red';
+            } else {
+                nomePessoaLabel1.style.display = 'none';
+            }
+        }
+        function validarNIF2() {
+            const nifPessoa = document.getElementById("nif_pessoa2").value;
+            const nomePessoaLabel2 = document.getElementById("nomePessoaLabel2");
+            const nifRegex = /^\d{9}$/;
+
+            if (!nifRegex.test(nifPessoa)) {
+                nomePessoaLabel2.textContent = "O NIF deve conter exatamente 9 números.";
+                nomePessoaLabel2.style.display = 'block';
+                nomePessoaLabel2.style.color = 'red';
+            } else {
+                nomePessoaLabel2.style.display = 'none';
+            }
+        }
+        function getCurrentDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+        document.getElementById("datainicio").setAttribute("max", getCurrentDate());
+      
+        document.getElementById("adicionarrelacionamentoForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Impede o comportamento padrão do formulário
+
+            // Captura os dados dos campos do formulário
+            const nif_pessoa1 = document.getElementById("nif_pessoa1").value;
+            const nif_pessoa2 = document.getElementById("nif_pessoa2").value;
+            const tipoderelacionamento = document.getElementById("tipoderelacionamento").value;
+            const datainicio = document.getElementById("datainicio").value;
+            const datafim = document.getElementById("datafim").value;
+
+            // Cria o objeto de relacionamento
+            const relacionamento = {
+                nif_pessoa1: nif_pessoa1,
+                nif_pessoa2: nif_pessoa2,
+                tipoderelacionamento: tipoderelacionamento,
+                datadeinicio: datainicio,
+                datadefim: datafim || null
+            };
+
+            // Verifica se o token de autenticação está presente no armazenamento local
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Você precisa estar logado para adicionar um relacionamento.");
+                return;
+            }
+
+            try {
+                // Faz a requisição para o backend
+                const response = await fetch('http://localhost:3000/relacionamento', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(relacionamento)
+                });
+
+                // Verifica a resposta da API
+                if (response.ok) {
+                    alert("Relacionamento adicionado com sucesso!");
+                } else {
+                    alert("Erro ao adicionar relacionamento.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao adicionar relacionamento.");
+            }
+        });
+
+        // Eventos de input para verificar as pessoas nos campos
+        document.getElementById("nif_pessoa1").addEventListener("input", verificarPessoas);
+        document.getElementById("nif_pessoa2").addEventListener("input", verificarPessoas);
+
+        async function verificarPessoas() {
+        const nif_pessoa1 = document.getElementById("nif_pessoa1").value;
+        const nif_pessoa2 = document.getElementById("nif_pessoa2").value;
+        const nomePessoaLabel1 = document.getElementById("nomePessoaLabel1");
+        const nomePessoaLabel2 = document.getElementById("nomePessoaLabel2");
+
+        
+        if (nif_pessoa1 || nif_pessoa2) {
+            try {
+                
+                nomePessoaLabel1.style.display = 'none';
+                nomePessoaLabel2.style.display = 'none';
+
+                
+                let pessoas = {};
+
+                if (nif_pessoa1) {
+                    const responsePessoa1 = await fetch(`http://localhost:3000/pessoa/${nif_pessoa1}`);
+                    if (responsePessoa1.ok) {
+                        const pessoa1 = await responsePessoa1.json();
+                        pessoas[nif_pessoa1] = pessoa1.Nome;
+                    } else {
+                        pessoas[nif_pessoa1] = "Pessoa 1 não encontrada";
+                    }
+                }
+
+                if (nif_pessoa2) {
+                    const responsePessoa2 = await fetch(`http://localhost:3000/pessoa/${nif_pessoa2}`);
+                    if (responsePessoa2.ok) {
+                        const pessoa2 = await responsePessoa2.json();
+                        pessoas[nif_pessoa2] = pessoa2.Nome;
+                    } else {
+                        pessoas[nif_pessoa2] = "Pessoa 2 não encontrada";
+                    }
+                }
+
+                
+                if (pessoas[nif_pessoa1]) {
+                    if (pessoas[nif_pessoa1] === "Pessoa 1 não encontrada") {
+                        nomePessoaLabel1.textContent = pessoas[nif_pessoa1];
+                        nomePessoaLabel1.style.display = 'block';
+                        nomePessoaLabel1.style.color = 'red';
+                    } else {
+                        nomePessoaLabel1.textContent = `Nome: ${pessoas[nif_pessoa1]}`;
+                        nomePessoaLabel1.style.display = 'block';
+                        nomePessoaLabel1.style.color = 'green';
+                    }
+                }
+
+                if (pessoas[nif_pessoa2]) {
+                    if (pessoas[nif_pessoa2] === "Pessoa 2 não encontrada") {
+                        nomePessoaLabel2.textContent = pessoas[nif_pessoa2];
+                        nomePessoaLabel2.style.display = 'block';
+                        nomePessoaLabel2.style.color = 'red';
+                    } else {
+                        nomePessoaLabel2.textContent = `Nome: ${pessoas[nif_pessoa2]}`;
+                        nomePessoaLabel2.style.display = 'block';
+                        nomePessoaLabel2.style.color = 'green';
+                    }
+                }
+
+            } catch (error) {
+                console.error("Erro ao buscar pessoas:", error);
+                nomePessoaLabel1.textContent = "Erro ao buscar pessoas";
+                nomePessoaLabel2.textContent = "Erro ao buscar pessoas";
+                nomePessoaLabel1.style.display = 'block';
+                nomePessoaLabel2.style.display = 'block';
+                nomePessoaLabel1.style.color = 'red';
+                nomePessoaLabel2.style.color = 'red';
+            }
+        } else {
+            nomePessoaLabel1.style.display = 'none';
+            nomePessoaLabel2.style.display = 'none';
+        }
+    }
+
+
+
+    </script>
+</body>
+</html>

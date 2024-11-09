@@ -1,0 +1,219 @@
+/* Reset básico para margens e paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background com gradiente suave e elegante */
+body {
+    background: linear-gradient(135deg, #a1a3a5, #c1c3c4);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+/* Container principal para centralizar o conteúdo */
+.main-container {
+    display: flex;
+    justify-content: center; 
+    gap: 60px; 
+    padding: 40px;
+}
+
+/* Estilo do contêiner geral com fundo translúcido */
+.container {
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(8px); 
+    padding: 40px;
+    border-radius: 18px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+    animation: fadeIn 1s ease-in-out;
+    width: 100%;
+}
+
+/* Animação de fade in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo do título */
+header h1 {
+    font-size: 2.3rem;
+    margin-bottom: 15px;
+    color: #2f2f2f;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* Estilo do parágrafo */
+header p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* Lista de navegação */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Itens da lista */
+nav ul li {
+    margin-bottom: 10px;
+}
+
+/* Links de navegação com bordas suaves e arredondadas */
+nav ul li a {
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #333;
+    padding: 12px 24px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 500;
+}
+
+/* Efeito de hover nos links */
+nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    border-color: #999;
+}
+
+/* Rodapé */
+footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* Estilo dos campos de entrada e botões */
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    color: #333;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #666;
+    outline: none;
+}
+
+/* Estilo do botão de submit */
+button[type="submit"] {
+    padding: 10px 25px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #444;
+    transform: scale(1.05);
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    nav ul li a {
+        font-size: 1rem;
+        padding: 8px 18px;
+    }
+
+    button[type="submit"] {
+        font-size: 1rem;
+    }
+}
+
+/* Estilo dos botões de login e registro */
+.auth-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Estilo geral dos botões de alternância */
+.auth-toggle-button {
+    background: transparent;
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0 8px;
+}
+
+/* Efeito de hover nos botões */
+.auth-toggle-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para o botão ativo */
+.auth-toggle-button.active {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #000;
+    border-color: #666;
+}
+
+/* Estilo do botão de logout */
+.logout-button {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Efeito de hover no botão */
+.logout-button:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}

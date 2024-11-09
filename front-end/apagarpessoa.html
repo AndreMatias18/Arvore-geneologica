@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apagar Pessoas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    <form id="buscarPessoaForm">
+        <h1>Apagar Pessoas</h1>
+
+        <label for="nif_pessoa">NIF:</label>
+        <input type="text" id="nif_pessoa" name="nif_pessoa" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos."><br>
+        
+
+        <button type="button" onclick="buscarPessoa()">Buscar Pessoa</button>
+        
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="nome"></div>
+        </div>
+        
+
+        <button type="button" id="apagarButton" style="display: none;" onclick="confirmarApagar()">Apagar Pessoa</button>
+    </form>
+
+    <script>
+
+        // Função para buscar a pessoa pelo NIF
+    async function buscarPessoa() {
+        const nif_pessoa = document.getElementById("nif_pessoa").value;
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Você precisa estar logado para buscar uma pessoa.");
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:3000/pessoa?nif=${nif_pessoa}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const pessoa = await response.json();
+                
+                if (pessoa && pessoa.Nome) {
+                    document.getElementById("nome").textContent = `Nome: ${pessoa.Nome}`;
+                    document.getElementById("apagarButton").style.display = "inline";
+                } else {
+                    document.getElementById("nome").textContent = "Pessoa não encontrada.";
+                    document.getElementById("apagarButton").style.display = "none";
+                }
+            } else {
+                document.getElementById("nome").textContent = "Pessoa não encontrada.";
+                document.getElementById("apagarButton").style.display = "none";
+            }
+        } catch (error) {
+            console.error("Erro ao buscar pessoa:", error);
+            alert("Erro ao buscar pessoa.");
+        }
+    }
+
+    // Função para confirmar e apagar a pessoa pelo NIF
+    async function confirmarApagar() {
+        const nif_pessoa = document.getElementById("nif_pessoa").value;
+        const nome = document.getElementById("nome").textContent;
+
+        if (!nif_pessoa) {
+            alert("NIF não pode estar vazio.");
+            return;
+        }
+
+        // Confirmação de exclusão
+        const confirmar = confirm(`Tem certeza que deseja apagar ${nome}?`);
+        if (!confirmar) {
+            return;
+        }
+
+        // Verifique se o token existe
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Você precisa estar logado para apagar uma pessoa.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/pessoa/${nif_pessoa}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+
+            // Log para ver o que a resposta retorna
+            console.log("Resposta da requisição:", response);
+
+            if (response.ok) {
+                alert(`Pessoa com NIF ${nif_pessoa} apagada com sucesso!`);
+                document.getElementById("nome").textContent = "";  // Limpa o nome após apagar
+                document.getElementById("apagarButton").style.display = "none";  // Oculta o botão "Apagar Pessoa"
+            } else {
+                const errorMessage = await response.text();
+                alert("Erro ao apagar pessoa: " + errorMessage);
+            }
+        } catch (error) {
+            console.error("Erro na requisição:", error);
+            alert("Erro ao apagar pessoa.");
+        }
+    }
+
+
+
+    
+    </script>
+</body>
+</html>

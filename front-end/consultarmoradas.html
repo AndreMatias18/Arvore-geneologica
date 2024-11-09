@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Moradas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    <form id="consultarmoradasForm">
+        <h1>Consultar Moradas</h1>
+
+        <label for="nif">NIF :</label>
+        <input type="text" id="nif" name="nif" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." ><br>
+
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="moradas-lista"></div>
+        </div>
+
+        <button type="submit">Consultar Moradas</button>
+    </form>
+
+    <script>
+        document.getElementById("consultarmoradasForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const nif = document.getElementById("nif").value;  // Obtém o NIF fornecido
+
+            try {
+                // Faz a requisição para buscar todas as moradas do NIF informado
+                const response = await fetch(`http://localhost:3000/morada?nif=${nif}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Verifica se a resposta foi ok
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Limpa a lista de moradas anterior
+                    document.getElementById("moradas-lista").innerHTML = '';
+
+                    // Verifica se há moradas retornadas
+                    if (data.length > 0) {
+                        // Exibe todas as moradas encontradas
+                        data.forEach((morada, index) => {
+                            const moradaDiv = document.createElement('div');
+                            moradaDiv.classList.add('morada-item');
+                            moradaDiv.innerHTML = `
+                                <h3>Morada ${index + 1}</h3>
+                                <p><strong>Morada:</strong> ${morada.morada}</p>
+                                <p><strong>Cidade:</strong> ${morada.Cidade}</p>
+                                <p><strong>Freguesia:</strong> ${morada.freguesia}</p>
+                                <p><strong>País:</strong> ${morada.Pais}</p>
+                                <p><strong>Data Início:</strong> ${morada.Data_Inicio}</p>
+                                <p><strong>Data Fim:</strong> ${morada.Data_Fim}</p>
+                                <hr>
+                            `;
+                            document.getElementById("moradas-lista").appendChild(moradaDiv);
+                        });
+                    } else {
+                        document.getElementById("moradas-lista").innerHTML = 'Nenhuma morada encontrada para o NIF informado.';
+                    }
+                } else {
+                    alert("Erro ao Consultar Moradas.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao Consultar Moradas.");
+            }
+        });
+    </script>
+</body>
+</html>

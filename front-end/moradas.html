@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morada</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    
+    <form id="adicionarmoradaForm">
+        <h1>Adicionar Morada</h1>
+
+        <label for="nif_pessoa">NIF:</label>
+        <input type="text" id="nif_pessoa" name="nif_pessoa" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." oninput="validarNIF()"><br>
+
+        <!-- Label onde será exibido o nome da pessoa -->
+        <label id="nomePessoaLabel" style="display: none; color: green;"></label><br>
+
+        <label for="morada">Morada:</label>
+        <input type="text" id="morada" name="morada" required><br>
+
+        <label for="cidade">Cidade:</label>
+        <input type="text" id="cidade" name="cidade" required><br>
+
+        <label for="freguesia">Freguesia:</label>
+        <input type="text" id="freguesia" name="freguesia"><br>
+
+        <label for="pais">País:</label>
+        <input type="text" id="pais" name="pais"><br>
+
+        <label for="datainicio">Data de Início:</label>
+        <input type="date" id="datainicio" name="datainicio" min="1910-01-01"><br>
+
+        <label for="datafim">Data de Fim:</label>
+        <input type="date" id="datafim" name="datafim" min="1910-01-01"><br>
+
+        <button type="submit">Adicionar Morada</button>
+    </form>
+
+    <script>
+        function getCurrentDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+
+        // Definir a data máxima como a data de hoje no campo "dataNascimento"
+        document.getElementById("datainicio").setAttribute("max", getCurrentDate());
+        document.getElementById("datafim").setAttribute("max", getCurrentDate());
+        // Função de validação do NIF (garante que tenha exatamente 9 dígitos e apenas números)
+        function validarNIF() {
+            const nifPessoa = document.getElementById("nif_pessoa").value;
+            const nomePessoaLabel = document.getElementById("nomePessoaLabel");
+
+            const nifRegex = /^\d{9}$/;
+
+            if (!nifPessoa || !nifRegex.test(nifPessoa)) {
+                nomePessoaLabel.textContent = "O NIF deve conter exatamente 9 dígitos.";
+                nomePessoaLabel.style.display = 'block';
+                nomePessoaLabel.style.color = 'red';
+            } else {
+                nomePessoaLabel.style.display = 'none';
+            }
+        }
+
+        document.getElementById("adicionarmoradaForm").addEventListener("submit", async function(event) {
+        event.preventDefault(); // Impede o envio do formulário
+
+        const nif_pessoa = document.getElementById("nif_pessoa").value;
+        const morada = document.getElementById("morada").value;
+        const freguesia = document.getElementById("freguesia").value;
+        const cidade = document.getElementById("cidade").value;
+        const pais = document.getElementById("pais").value;
+        const datainicio = document.getElementById("datainicio").value;
+        const datafim = document.getElementById("datafim").value;
+
+        // Cria o objeto com os dados do formulário
+        const moradatable = {
+            nif_pessoa: nif_pessoa,
+            morada: morada,
+            cidade: cidade,
+            freguesia: freguesia,
+            pais: pais,
+            datainicio: datainicio,
+            datafim: datafim || null
+        };
+
+        // Verifica se a data de fim não é anterior à data de início
+        if (datainicio && datafim && new Date(datafim) < new Date(datainicio)) {
+            alert("A data de fim não pode ser anterior à data de início.");
+            return;
+        }
+
+        // Verifica se a data de início não é posterior à data de hoje
+        const datadeinicio = new Date(datainicio);
+        const hoje = new Date();
+        if (datadeinicio > hoje) {
+            alert("A data de início não pode ser posterior ao dia de hoje.");
+            return;
+        }
+
+        console.log("Enviando dados para o backend:", moradatable);  // Verifique os dados enviados
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Você precisa estar logado para adicionar uma morada.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/morada', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(moradatable)
+            });
+
+            if (response.ok) {
+                alert("Morada adicionada com sucesso!");
+            } else {
+                const errorMsg = await response.text();
+                console.error("Erro ao adicionar morada:", errorMsg);  // Mostre o erro exato
+                alert("Erro ao adicionar morada.");
+            }
+        } catch (error) {
+            console.error("Erro de comunicação com a API:", error);
+            alert("Erro ao adicionar morada.");
+        }
+    });
+
+
+        // Evento para exibir o nome da pessoa quando o NIF é inserido
+        document.getElementById("nif_pessoa").addEventListener("input", async function() {
+            const nifPessoa = document.getElementById("nif_pessoa").value;
+            const nomePessoaLabel = document.getElementById("nomePessoaLabel");
+
+            if (nifPessoa) {
+                try {
+                    // Faz a requisição para obter o nome da pessoa pelo NIF
+                    const response = await fetch(`http://localhost:3000/pessoa?nif=${nifPessoa}`);
+
+                    if (response.ok) {
+                        const pessoa = await response.json();
+                        nomePessoaLabel.textContent = `Nome: ${pessoa.Nome}`;
+                        nomePessoaLabel.style.display = 'block';
+                        nomePessoaLabel.style.color = 'green';  // Exibe o nome em verde
+                    } else if (response.status === 404) {
+                        nomePessoaLabel.textContent = "Pessoa não encontrada";
+                        nomePessoaLabel.style.display = 'block';
+                        nomePessoaLabel.style.color = 'red';  // Exibe mensagem em vermelho
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar pessoa:", error);
+                    nomePessoaLabel.textContent = "Erro ao buscar pessoa";
+                    nomePessoaLabel.style.display = 'block';
+                    nomePessoaLabel.style.color = 'red';
+                }
+            } else {
+                nomePessoaLabel.style.display = 'none';  // Esconde o label se o campo estiver vazio
+            }
+        });
+    </script>
+</body>
+</html>

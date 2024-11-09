@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Relacionamentos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    <form id="consultarrelacionamentoForm">
+        <h1>Consultar Relacionamentos</h1>
+
+        <label for="nif_pessoa1">NIF 1:</label>
+        <input type="text" id="nif_pessoa1" name="nif_pessoa1" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." ><br>
+
+        <label for="nif_pessoa2">NIF 2:</label>
+        <input type="text" id="nif_pessoa2" name="nif_pessoa2" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." ><br>
+
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="nome1"></div>
+            <div id="nome2"></div>
+            <div id="relacionamentos"></div>
+        </div>
+
+        <button type="submit">Consultar Relacionamentos</button>
+    </form>
+
+    <script>
+        document.getElementById("consultarrelacionamentoForm").addEventListener("submit", async function (event) {
+            event.preventDefault();  // Impede a navegação padrão do formulário
+
+            const nif_pessoa1 = document.getElementById("nif_pessoa1").value;
+            const nif_pessoa2 = document.getElementById("nif_pessoa2").value;
+
+            try {
+                // Verifica as pessoas pelo NIF
+                const response = await fetch(`http://localhost:3000/pessoa/${nif_pessoa1}`);
+                const pessoa1 = await response.json();
+                document.getElementById("nome1").textContent = pessoa1.Nome ? `Nome 1: ${pessoa1.Nome}` : "Pessoa 1 não encontrada";
+
+                const response2 = await fetch(`http://localhost:3000/pessoa/${nif_pessoa2}`);
+                const pessoa2 = await response2.json();
+                document.getElementById("nome2").textContent = pessoa2.Nome ? `Nome 2: ${pessoa2.Nome}` : "Pessoa 2 não encontrada";
+
+                // Agora busca os relacionamentos entre essas duas pessoas
+                const relResponse = await fetch(`http://localhost:3000/relacionamento?nif=${nif_pessoa1}`);
+                const relacionamentos = await relResponse.json();
+
+                const relContainer = document.getElementById("relacionamentos");
+                relContainer.innerHTML = ''; // Limpa resultados anteriores
+
+                // Filtra e exibe os relacionamentos entre as duas pessoas
+                const filteredRel = relacionamentos.filter(rel => 
+                    (rel.NIF_Pessoa_1 === nif_pessoa1 && rel.NIF_Pessoa_2 === nif_pessoa2) ||
+                    (rel.NIF_Pessoa_1 === nif_pessoa2 && rel.NIF_Pessoa_2 === nif_pessoa1)
+                );
+
+                if (filteredRel.length === 0) {
+                    relContainer.innerHTML = "Nenhum relacionamento encontrado entre os NIFs informados.";
+                } else {
+                    filteredRel.forEach((rel, index) => {
+                        const relElement = document.createElement("div");
+                        relElement.classList.add("relacionamento-item");
+                        relElement.innerHTML = `
+                            <h3>Relacionamento ${index + 1}</h3>
+                            <p><strong>Tipo de Relacionamento:</strong> ${rel.Tipo_de_Relacionamento}</p>
+                            <p><strong>Data Início:</strong> ${rel.Data_Inicio ? new Date(rel.Data_Inicio).toLocaleDateString('pt-PT') : 'Não disponível'}</p>
+                            <p><strong>Data Fim:</strong> ${rel.Data_Fim ? new Date(rel.Data_Fim).toLocaleDateString('pt-PT') : 'Não disponível'}</p>
+                        `;
+                        relContainer.appendChild(relElement);
+                    });
+                }
+
+            } catch (error) {
+                console.log("Erro de conexão:", error);
+                alert("Erro ao consultar relacionamentos.");
+            }
+        });
+    </script>
+</body>
+</html>

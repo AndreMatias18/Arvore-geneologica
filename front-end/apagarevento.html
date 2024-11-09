@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar e Apagar Eventos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+
+    <!-- Formulário para consultar eventos de uma pessoa -->
+    <form id="consultareventosForm">
+        <h1>Consultar Eventos</h1>
+
+        <label for="nif_pessoa">NIF da Pessoa:</label>
+        <input type="text" id="nif_pessoa" name="nif_pessoa" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos."><br>
+
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="tipodeevento"></div>
+            <div id="descricao"></div>
+            <div id="localdeevento"></div>
+        </div>
+
+        <button type="submit">Consultar Eventos</button>
+    </form>
+
+    <div style="width: 100px;">
+
+    </div>
+
+    <!-- Formulário para apagar evento -->
+    <form id="apagarEventoForm">
+        <h1>Apagar Evento</h1>
+        <label for="id_evento">ID do Evento:</label>
+        <input type="text" id="id_evento" name="id_evento" required><br>
+        <button type="submit">Apagar Evento</button>
+    </form>
+
+    <script>
+        // Consultar eventos por NIF da pessoa
+        document.getElementById("consultareventosForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const nif_pessoa = document.getElementById("nif_pessoa").value;
+
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert("Você precisa estar logado para consultar os eventos.");
+                return;
+            }
+
+            try {
+                // Requisição GET para obter eventos pelo NIF
+                const response = await fetch(`http://localhost:3000/eventos?nif=${nif_pessoa}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const eventos = await response.json();
+
+                    // Exibe os eventos encontrados
+                    const resultadoDiv = document.getElementById("resultado");
+                    resultadoDiv.innerHTML = '';  // Limpa os resultados anteriores
+
+                    if (eventos.length === 0) {
+                        resultadoDiv.innerHTML = "Nenhum evento encontrado para o NIF fornecido.";
+                    } else {
+                        eventos.forEach((evento, index) => {
+                            const eventoDiv = document.createElement("div");
+                            eventoDiv.innerHTML = `
+                                <h3>Evento ${index + 1}</h3>
+                                <p><strong>Tipo de Evento:</strong> ${evento.Tipo_Evento}</p>
+                                <p><strong>Descrição:</strong> ${evento.Descricao}</p>
+                                <p><strong>Local do Evento:</strong> ${evento.Local_Evento}</p>
+                                <p><strong>Data do Evento:</strong> ${new Date(evento.Data_Evento).toLocaleDateString('pt-PT')}</p>
+                                <p><strong>ID do Evento:</strong> ${evento.ID_Evento}</p>
+                            `;
+                            resultadoDiv.appendChild(eventoDiv);
+                        });
+                    }
+                } else {
+                    alert("Erro ao consultar eventos.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao consultar eventos.");
+            }
+        });
+
+        // Apagar evento
+        document.getElementById("apagarEventoForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const id_evento = document.getElementById("id_evento").value;
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                alert("Você precisa estar logado para apagar um evento.");
+                return;
+            }
+
+            if (!id_evento) {
+                alert("O ID do evento é obrigatório.");
+                return;
+            }
+
+            if (confirm("Tem certeza de que deseja apagar este evento?")) {
+                try {
+                    const response = await fetch(`http://localhost:3000/evento/${id_evento}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert("Evento apagado com sucesso.");
+                        document.getElementById("id_evento").value = "";  // Limpa o campo
+                    } else {
+                        alert("Erro ao apagar o evento.");
+                    }
+                } catch (error) {
+                    console.error("Erro:", error);
+                    alert("Erro ao apagar o evento.");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

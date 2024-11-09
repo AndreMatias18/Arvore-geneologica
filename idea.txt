@@ -1,0 +1,58 @@
+
+Tabela: Pessoa
+
+Essa tabela armazena informações sobre cada indivíduo na árvore genealógica.
+
+ID_Pessoa (PK): Identificador único para cada pessoa.
+Nome: Nome completo da pessoa.
+Data_Nascimento: Data de nascimento.
+Data_Falecimento (opcional): Data de falecimento.
+Sexo: Sexo da pessoa (por exemplo, M/F).
+Local_Nascimento: Local de nascimento (cidade/país).
+Local_Falecimento (opcional): Local de falecimento (cidade/país).
+ID_Mae (FK - auto-relacionamento): Referência à mãe da pessoa (relacionamento com a mesma tabela Pessoa).
+ID_Pai (FK - auto-relacionamento): Referência ao pai da pessoa (relacionamento com a mesma tabela Pessoa).
+2. Tabela: Relacionamento
+Essa tabela define os relacionamentos entre duas pessoas (por exemplo, cônjuge, irmãos).
+
+ID_Relacionamento (PK): Identificador único para cada relacionamento.
+ID_Pessoa_1 (FK): Referência para uma pessoa na tabela Pessoa.
+ID_Pessoa_2 (FK): Referência para outra pessoa na tabela Pessoa.
+Tipo_Relacionamento: Tipo de relacionamento (ex: cônjuge, irmão, avô, etc.).
+Data_Inicio (opcional): Data de início do relacionamento (ex: data de casamento).
+Data_Fim (opcional): Data de fim do relacionamento (ex: data de divórcio).
+3. Tabela: Endereco
+Essa tabela armazena informações sobre os endereços históricos ou locais de residência das pessoas.
+
+ID_Endereco (PK): Identificador único para cada endereço.
+ID_Pessoa (FK): Referência à pessoa na tabela Pessoa.
+Endereco: Endereço completo (rua, número, etc.).
+Cidade: Cidade do endereço.
+Estado: Estado do endereço.
+Pais: País do endereço.
+Data_Inicio: Data em que a pessoa começou a residir neste endereço.
+Data_Fim (opcional): Data em que a pessoa deixou de residir neste endereço.
+4. Tabela: Evento
+Essa tabela armazena eventos importantes na vida de cada pessoa, como nascimento, casamento, etc.
+
+ID_Evento (PK): Identificador único para cada evento.
+ID_Pessoa (FK): Referência à pessoa na tabela Pessoa.
+Tipo_Evento: Tipo de evento (ex: nascimento, casamento, falecimento).
+Data_Evento: Data do evento.
+Descricao (opcional): Descrição adicional do evento.
+Local_Evento: Local onde o evento ocorreu.
+5. Tabela: Documento
+Essa tabela armazena informações sobre documentos relevantes para a árvore genealógica, como certidões de nascimento, casamento e óbito.
+
+ID_Documento (PK): Identificador único para cada documento.
+ID_Pessoa (FK): Referência à pessoa na tabela Pessoa.
+Tipo_Documento: Tipo de documento (ex: certidão de nascimento, certidão de casamento).
+Numero_Documento: Número do documento (se aplicável).
+Data_Emissao: Data de emissão do documento.
+Local_Emissao: Local onde o documento foi emitido.
+Chaves Estrangeiras e Relacionamentos
+Na tabela Pessoa, as colunas ID_Mae e ID_Pai são chaves estrangeiras auto-relacionadas que referenciam a própria tabela Pessoa, formando assim os laços de parentesco direto (mãe e pai).
+
+Na tabela Relacionamento, as colunas ID_Pessoa_1 e ID_Pessoa_2 são chaves estrangeiras para a tabela Pessoa, criando as conexões entre pessoas diferentes.
+
+As tabelas Endereco, Evento e Documento possuem a coluna ID_Pessoa como chave estrangeira para referenciar diretamente a tabela Pessoa, associando essas informações a cada indivíduo.

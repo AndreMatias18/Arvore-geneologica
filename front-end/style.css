@@ -1,0 +1,163 @@
+/* Estilo geral do corpo */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #b0b0b1, #a0a1a2); /* Gradiente cinza moderno */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #e1e1e1;
+}
+
+/* Caixa de resultados */
+#resultado {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #e5e5e7;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    color: #2e2e2e;
+}
+
+#resultado div {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #2e2e2e;
+    font-weight: bold;
+    padding: 8px; /* Mais espaçamento interno */
+    border-radius: 5px;
+}
+
+#resultado div:nth-child(odd) {
+    background-color: #dfe0e1; /* Alternância de cor suave */
+}
+
+#resultado div:nth-child(even) {
+    background-color: #f7f7f8;
+}
+
+/* Caixa do formulário */
+form {
+    background-color: rgba(255, 255, 255, 0.15); /* Fundo de vidro translúcido */
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
+    width: 100%;
+    backdrop-filter: blur(8px); /* Glassmorphism */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    color: #e1e1e1;
+    margin-bottom: 20px;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+}
+
+/* Estilo para os campos do formulário */
+label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #e1e1e1;
+    letter-spacing: 0.8px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e1e1e1;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Estilo do botão */
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #333; /* Cor de fundo mais elegante */
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background-color: #444; /* Cor de hover mais intensa */
+    transform: scale(1.05);
+}
+
+/* Caixa de foco para inputs */
+input:focus, select:focus {
+    border-color: #ccc;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Botão Voltar para Página Inicial */
+.btn-voltar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px 18px;
+    border-radius: 25px;
+    color: #e1e1e1;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-voltar:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 600px) {
+    form {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}

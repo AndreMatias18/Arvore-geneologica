@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apagar Moradas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+    <style>
+        form {
+            margin-bottom: 40px; /* Distância entre os formulários */
+        }
+
+        h1 {
+            margin-bottom: 20px; /* Espaço abaixo do título */
+        }
+    </style>
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    
+    <!-- Formulário para consultar moradas -->
+    <form id="consultarmoradasForm" style="margin-bottom: 40px;">
+        <h1>Consultar Moradas</h1>
+
+        <label for="nif">NIF :</label>
+        <input type="text" id="nif" name="nif" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." ><br>
+
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="moradas-lista"></div>
+        </div>
+        <button type="submit">Consultar Moradas</button>
+    </form>
+    <div style="width: 100px;">
+        
+    </div>
+    <form id="apagarmoradaForm">
+        <label for="id_morada">ID da Morada para Apagar:</label>
+        <input type="text" id="id_morada" name="id_morada" required><br>
+        <button type="submit">Apagar Morada</button>
+    </form>
+
+    <script>
+        document.getElementById("consultarmoradasForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const nif = document.getElementById("nif").value;  // Obtém o NIF fornecido
+
+            try {
+                const response = await fetch(`http://localhost:3000/morada?nif=${nif}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("moradas-lista").innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach((morada, index) => {
+                            const moradaDiv = document.createElement('div');
+                            moradaDiv.classList.add('morada-item');
+                            moradaDiv.innerHTML = `
+                                <h3>Morada ${index + 1}</h3>
+                                <p><strong>ID Morada:</strong> ${morada.ID_Endereco}</p>
+                                <p><strong>Morada:</strong> ${morada.morada}</p>
+                                <p><strong>Cidade:</strong> ${morada.Cidade}</p>
+                                <p><strong>Freguesia:</strong> ${morada.freguesia}</p>
+                                <p><strong>País:</strong> ${morada.Pais}</p>
+                                <p><strong>Data Início:</strong> ${morada.Data_Inicio}</p>
+                                <p><strong>Data Fim:</strong> ${morada.Data_Fim}</p>
+                                <hr>
+                            `;
+                            document.getElementById("moradas-lista").appendChild(moradaDiv);
+                        });
+                    } else {
+                        document.getElementById("moradas-lista").innerHTML = 'Nenhuma morada encontrada para o NIF informado.';
+                    }
+                } else {
+                    alert("Erro ao Consultar Moradas.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao Consultar Moradas.");
+            }
+        });
+
+        document.getElementById("apagarmoradaForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const id_morada = document.getElementById("id_morada").value;
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                alert("Você precisa estar logado para apagar uma morada.");
+                return;
+            }
+
+            if (confirm("Tem certeza de que deseja apagar esta morada?")) {
+                try {
+                    const response = await fetch(`http://localhost:3000/morada/${id_morada}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert("Morada apagada com sucesso.");
+                        document.getElementById("id_morada").value = "";
+                        document.getElementById("consultarmoradasForm").dispatchEvent(new Event('submit')); // Atualiza a lista
+                    } else {
+                        alert("Erro ao apagar a morada.");
+                    }
+                } catch (error) {
+                    console.error("Erro:", error);
+                    alert("Erro ao apagar a morada.");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

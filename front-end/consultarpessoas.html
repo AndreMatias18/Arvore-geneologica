@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Pessoas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="tree.png">
+</head>
+<body>
+    <a href="paginainicial.html" class="btn-voltar">Início</a>
+    <form id="consultarpessoaForm">
+        <h1>Consultar Pessoas</h1>
+
+        <label for="nif">NIF :</label>
+        <input type="text" id="nif" name="nif" required maxlength="9" pattern="\d{9}" title="O NIF deve conter exatamente 9 dígitos." ><br>
+
+        <div id="resultado" style="margin-top: 20px;">
+            <div id="nome"></div>
+            <div id="data-nascimento"></div>
+            <div id="data-falecimento"></div>
+            <div id="sexo"></div>
+            <div id="local-de-nascimento"></div>
+            <div id="local-de-falecimento"></div>
+            <div id="nome-mae"></div>
+            <div id="nome-pai"></div>
+        </div>
+
+        <button type="submit">Consultar Pessoa</button>
+    </form>
+
+    <script>
+        document.getElementById("consultarpessoaForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const nif = document.getElementById("nif").value; // Obtemos o NIF do campo de input
+
+            if (!nif) {
+                alert("Por favor, insira um NIF válido.");
+                return;
+            }
+
+            try {
+                // Faz a requisição para o endpoint /pessoa/:nif
+                const response = await fetch(`http://localhost:3000/consultarpessoa/${nif}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const pessoa = await response.json(); // Espera o retorno da pessoa no formato JSON
+                    
+                    // Preenche os dados retornados nas divs correspondentes
+                    document.getElementById("nome").textContent = `Nome: ${pessoa.Nome}`;
+                    document.getElementById("data-nascimento").textContent = `Data de Nascimento: ${pessoa.Data_Nascimento || 'Não informado'}`;
+                    document.getElementById("data-falecimento").textContent = `Data de Falecimento: ${pessoa.Data_Falecimento || 'Não informado'}`;
+                    document.getElementById("sexo").textContent = `Sexo: ${pessoa.Sexo || 'Não informado'}`;
+                    document.getElementById("local-de-nascimento").textContent = `Local de Nascimento: ${pessoa.Local_de_Nascimento || 'Não informado'}`;
+                    document.getElementById("local-de-falecimento").textContent = `Local de Falecimento: ${pessoa.Local_de_Falecimento || 'Não informado'}`;
+                    document.getElementById("nome-mae").textContent = `Nome da Mãe: ${pessoa.Nome_Mae || 'Não informado'}`;
+                    document.getElementById("nome-pai").textContent = `Nome do Pai: ${pessoa.Nome_Pai || 'Não informado'}`;
+                } else {
+                    alert("Pessoa não encontrada para o NIF informado.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao consultar pessoa.");
+            }
+        });
+    </script>
+</body>
+</html>

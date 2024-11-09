@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login e Registro</title>
+    <link rel="stylesheet" href="style3.css">
+    <link rel="shortcut icon" href="tree.png" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h2>Bem-vindo </h2>
+        <br>
+        <div id="loginForm" class="form-container">
+            <form id="login">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" name="username" required>
+                <label for="loginPassword">Senha:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+        <div id="registerForm" class="form-container" style="display: none;">
+            <form id="register">
+                <label for="registerUsername">Username:</label>
+                <input type="text" id="registerUsername" name="username" required>
+                <label for="registerPassword">Senha:</label>
+                <input type="password" id="registerPassword" name="password" required>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+        <br>
+       
+        <div class="auth-toggle ">
+            <button id="loginTab" class="auth-toggle-button" onclick="showTab('login')">Login</button>
+            <button id="registerTab" class="auth-toggle-button" onclick="showTab('register')">Registro</button>
+        </div>
+    </div>
+    <script>
+        function showTab(tab) {
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+        }  
+        document.getElementById("login").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem("token", data.token);
+                    window.location.href = "/paginainicial.html";
+                } else {
+                    alert("Usuário ou senha incorretos.");
+                }
+            } catch (error) {
+                console.error("Erro ao fazer login:", error);
+            }
+        });
+        document.getElementById("register").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const username = document.getElementById("registerUsername").value;
+            const password = document.getElementById("registerPassword").value;
+
+            try {
+                const response = await fetch    ("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password})
+                });
+
+                if (response.ok) {
+                    alert("Registro realizado com sucesso. Faça login.");
+                    showTab('login');
+                } else {
+                    alert("Erro ao registrar. Tente novamente.");
+                }
+            } catch (error) {
+                console.error("Erro ao registrar:", error);
+            }
+        });
+    </script>
+</body>
+</html>

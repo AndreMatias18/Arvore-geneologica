@@ -1,0 +1,150 @@
+/* Reset básico para margens e paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background com gradiente suave */
+body {
+    background: linear-gradient(135deg, #d1d1d1, #b0b0b0);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center; 
+    padding: 40px;
+}
+
+.container {
+    background: #ffffff; /* Fundo branco para o contêiner */
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+header p {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.auth-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.auth-toggle-button {
+    background: transparent;
+    color: #333; 
+    border: 2px solid #ccc;
+    padding: 10px 20px;
+    border-radius: 25px; 
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0 5px; 
+}
+
+.auth-toggle-button.active {
+    background-color: #f0f0f0; /* Fundo para o botão ativo */
+    color: #000; /* Texto do botão ativo */
+}
+
+.auth-toggle-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+    display: none; /* Esconde todos os formulários inicialmente */
+}
+
+.auth-form.active {
+    display: block; /* Mostra apenas o formulário ativo */
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #333;
+    outline: none; /* Remove a borda padrão de foco */
+}
+
+button {
+    background: #7e7e80;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #2f3031; 
+    transform: translateY(-2px); 
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .auth-toggle-button {
+        font-size: 1rem;
+    }
+
+    input[type="text"], input[type="password"] {
+        font-size: 0.9rem;
+    }
+
+    button {
+        font-size: 1rem;
+    }
+}
